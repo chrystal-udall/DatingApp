@@ -8,20 +8,20 @@ namespace API.Extensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-              .AddJwtBearer(options =>
+          services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+              {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                    ValidateIssuerSigningKey = true, //check token assigned by issuer
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"])),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    };
-                }
-              );
+                  ValidateIssuerSigningKey = true, //check token assigned by issuer
+                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"])),
+                  ValidateIssuer = false,
+                  ValidateAudience = false,
+                };
+              }
+            );
 
-              return services;
+          return services;
         }
     }
 }
