@@ -1,4 +1,5 @@
 using API.Data;
+using API.Helpers;
 using API.Interfaces;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,9 @@ namespace API.Extensions
           services.AddScoped<ITokenService, TokenService>(); // scoped to http request, transient too short-lived; singleton example: caching service. You want an interface so that you can mock
           services.AddScoped<IUserRepository, UserRepository>(); //adding scoped here makes it injectable
           services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+          
+          services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
+          services.AddScoped<IPhotoService, PhotoService>();
 
           return services;
         }
