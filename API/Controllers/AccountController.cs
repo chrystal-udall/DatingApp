@@ -5,6 +5,7 @@ using API.Data;
 using API.DTO;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -15,32 +16,38 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly IUserRepository userRepository;
-
         public ITokenService _tokenService { get; }
+        private readonly IMapper _mapper;
 
-        public AccountController(DataContext context, ITokenService tokenService, IUserRepository userRepository)
+        public AccountController(DataContext context, ITokenService tokenService, IUserRepository userRepository, IMapper mapper)
         {
+            this._mapper = mapper;
             this._tokenService = tokenService;
             this.userRepository = userRepository;
             this._context = context;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AppUser>> Register(RegisterDTO registerDTO) 
+        public async Task<ActionResult<UserDto>> Register(RegisterDTO registerDTO) 
         {
             if(await UserExists(registerDTO.Username)) return BadRequest("username is taken");
 
+            var user = _mapper.Map<AppUser>(registerDTO);
+
             using var hmac = new HMACSHA512(); // salt
-            var user = new AppUser {
-                UserName = registerDTO.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password)),
-                PasswordSalt = hmac.Key
-            };
+            user.UserName = registerDTO.Username.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password));
+            user.PasswordSalt = hmac.Key;
 
             _context.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return new UserDto
+            {
+              Username = user.UserName,
+              Token = _tokenService.CreateToken(user),
+              KnownAs = user.KnownAs
+            };
         }
 
         [HttpPost("login")]
