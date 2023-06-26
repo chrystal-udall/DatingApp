@@ -2,6 +2,7 @@ using API.Data;
 using API.Helpers;
 using API.Interfaces;
 using API.Services;
+using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions
@@ -21,7 +22,10 @@ namespace API.Extensions
           services.AddScoped<ILikesRepository, LikesRepository>();
           services.AddScoped<IMessageRepository, MessageRepository>();
           services.AddScoped<LogUserActivity>();
+          services.AddSingleton<PrescenceTracker>(); //need singleton here to make sure it lives for the life of the application
           
+          services.AddSignalR();
+
           services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
           services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
