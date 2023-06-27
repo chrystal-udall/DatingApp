@@ -19,10 +19,9 @@ namespace API.Extensions
           services.AddScoped<ITokenService, TokenService>(); // scoped to http request, transient too short-lived; singleton example: caching service. You want an interface so that you can mock
           services.AddScoped<IUserRepository, UserRepository>(); //adding scoped here makes it injectable
           services.AddScoped<IPhotoService, PhotoService>();
-          services.AddScoped<ILikesRepository, LikesRepository>();
-          services.AddScoped<IMessageRepository, MessageRepository>();
           services.AddScoped<LogUserActivity>();
           services.AddSingleton<PrescenceTracker>(); //need singleton here to make sure it lives for the life of the application
+          services.AddScoped<IUnitOfWork, UnitOfWork>();
           
           services.AddSignalR();
 

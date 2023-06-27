@@ -71,15 +71,17 @@ namespace API.Data
             .ToListAsync();
         }
 
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0; //save changes returns total changes saved
-        }
-
         public void Update(AppUser user)
         {
             _context.Entry(user).State = EntityState.Modified; //inform ef tracker that it has been updated. This is included as a precaution - ef should pick it up
+        }
+
+        public async Task<string> GetUserGender(string username)
+        {
+            return await _context.Users
+                .Where(x => x.UserName == username)
+                .Select(x => x.Gender)
+                .FirstOrDefaultAsync();
         }
     }
 }
