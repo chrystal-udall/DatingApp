@@ -28,9 +28,13 @@ app.UseCors(builder => builder
 app.UseAuthentication(); // is token valid
 app.UseAuthorization(); // are you allowed to access it (e.g. bouncer)
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
 app.MapHub<PrescenceHub>("hubs/prescence");
 app.MapHub<MessageHub>("hubs/message");
+app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
