@@ -12,7 +12,7 @@ namespace API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration){
           services.AddDbContext<DataContext>(opt => 
           {
-            opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+            opt.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
           });
           
           services.AddCors();
